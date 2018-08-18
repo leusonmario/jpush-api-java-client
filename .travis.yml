@@ -1,3 +1,5 @@
+
+sudo: required
 language: java
 
 jdk:
@@ -6,8 +8,23 @@ jdk:
   - openjdk6
   - openjdk7
 
-#branches:
-#  only:
-#    - master
 
 
+script:
+  - mvn clean cobertura:cobertura -Dtest=AndroidNotificationTest#testQuickAlert -DfailIfNoTests=false
+
+before_deploy:
+- tar -zcvf coverage-result.tar.gz /home/travis/build/leusonmario/jpush-api-java-client/target/site/cobertura
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "hSMX6npHVczOFj/009H2qhuU+fJDT4o6dQ3ReJKSsm6FNiF5s+0vNoOoSEFjmo7zbqJQ1NuGGO8l6oNTEutPSFjA/RAc9tU2BBIQTwotXbMwqxeb09K0TAMVCBlcrYFMMGkvy3JtKfEa+L4k9uCVD1QGagPLqhoavO40MBZNKRjxUcr6mgKWne7QlROkUAsB+BTAXik6o8jrvf1rSvBWqj1xP8X1QZkGKKx2J/AtWXdy3zm0WdoiZu7PruLyxpiXkJlX50xrYwE/icKwPLW0hDD15Jik9zhCUR6UeROIompoltriDR/CRsowBhMsT9LuKPhN88GBj/8ayO/GCmuZo3GWcuYbyv7psbjIdg3253ijL0czawDXQ8hu6HiRHCRHrE0lSlt1FEQ1foIspmJC2FMCy+XOQpoZRFf2smzvP5U34Kqx/GqwSjmmtIOMygnujZRle0nFWOg9HHnyDximMlq2tPixokEzAYTM3HI8KgrmtThPyP6lXF16KLYHagbfEMHKchAOnp71oarfqb+/iDFTo/6YfLNeUk+eR/CYl8txkTFXJz54NvDWs+CTQUrirqmETilz6cNpS6yGUbeRczXDyEWXyxQ2HLYN2gydC49WI6CrDSzCAR/GkHFCoGHqf1heANOmAVFLrh1NW/y/AZym0LKYi+1O5b2rHgzHvKY="
+
+
+  file: coverage-result.tar.gz
+  file_glob: true
+  overwrite: true
+  skip_cleanup: true
+  on:
+    tags: true
